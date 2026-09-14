@@ -5,7 +5,7 @@ server that accepts every message it is sent and keeps it, and a web inbox to
 read them in, with HTML and link checks and an API.
 
 This template installs it on a Cubeship instance as a test inbox for the apps
-beside it, with its messages kept in a volume.
+beside it, with SMTP on a TCP port and its messages kept in a volume.
 
 **Nothing is delivered.** Every message sent to Mailpit stays in Mailpit,
 whatever address it is for, so point staging apps at it to see the mail they
@@ -18,7 +18,7 @@ server (`MP_SMTP_RELAY_*`); this template does not configure that.
   on the domain you choose behind a username and password, SMTP on port
   `1025`, and a volume at `/data` holding the message database.
 
-It needs Cubeship 0.7.0 or newer.
+It needs Cubeship 0.7.2 or newer.
 
 ## What you are asked
 
@@ -28,14 +28,18 @@ It needs Cubeship 0.7.0 or newer.
 | The username you sign in with | Anything without spaces or a colon. `admin` by default. |
 | The password you sign in with | Nothing — the instance generates it and shows it once. **Keep a copy.** |
 | How many messages to keep | `500` by default. Beyond it the oldest are deleted; `0` keeps them all. |
+| The port SMTP answers on | `1025` by default. Choose a port from `1024` to `65535`, and open it in your provider's firewall too. |
 
 ## Sending mail to it
 
-SMTP is not on the domain: a domain on Cubeship carries HTTP only. Port
-`1025` is reachable by apps on the same instance, at Mailpit's internal
-address, `cubeship-mailpit-production-mailpit` with the suggested names.
+SMTP is not on the domain: a domain on Cubeship carries HTTP only. From outside
+the instance, connect to its address on the port you chose. From an app on the
+same instance, use Mailpit's internal address,
+`cubeship-mailpit-production-mailpit` with the suggested names, on port `1025`.
 
 It accepts any username and password, or none, over plain SMTP without TLS.
+This is a test inbox, not an internet-facing mail relay; do not publish the
+port to an untrusted network.
 Give an app that host, port `1025`, and turn TLS off. For a
 [Ghost](https://github.com/cubeshipd/cubeship-ghost-template) app, for
 example:
